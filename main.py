@@ -192,60 +192,15 @@ def from_file(mode):
             filepath = cwd
             filepath += input("\n\tPlease type path to .txt file to encrypt.\nPath: " + cwd)
             filepath = Path(filepath)
-            if verify_path(filepath, "file") is True:
-                while True:
-                    try:
-                        shift = int(input("\n\tPlease type shift\'s number for " + mode +":\n\t"))
-                    except ValueError:
-                        print("Wrong input, please type number")
-                        continue
-                    if str(shift).isdigit():
-                        break
-                if mode == "encrypt":
-                    encrypt_to_menu((encrypt(Path.read_text(filepath), shift), shift))
-                else:
-                    decrypt_to_menu((decrypt(Path.read_text(filepath), shift), shift))
-            else:
-                print("Wrong file or file not found, try again.")
-                continue
+            process_file(filepath, mode)
         elif startpath == 2:
             filepath = userdir
             filepath += input("\n\tPlease type path to .txt file to encrypt.\nPath: " + userdir)
             filepath = Path(filepath)
-            if verify_path(filepath, "file") is True:
-                while True:
-                    try:
-                        shift = int(input("\n\tPlease type shift\'s number for " + mode + ":\n\t"))
-                    except ValueError:
-                        print("Wrong input, please type number")
-                        continue
-                    if str(shift).isdigit():
-                        break
-                if mode == "encrypt":
-                    encrypt_to_menu((encrypt(Path.read_text(filepath), shift), shift))
-                else:
-                    decrypt_to_menu((decrypt(Path.read_text(filepath), shift), shift))
-            else:
-                print("Wrong file or file not found, try again.")
-                continue
+            process_file(filepath, mode)
         elif startpath == 3:
             filepath = Path(input("\n\tPlease type path to .txt file to encrypt.\nPath: "))
-            if verify_path(filepath, "file") is True:
-                while True:
-                    try:
-                        shift = int(input("\n\tPlease type shift\'s number for " + mode + ":\n\t"))
-                    except ValueError:
-                        print("Wrong input, please type number")
-                        continue
-                    if str(shift).isdigit():
-                        break
-                if mode == "encrypt":
-                    encrypt_to_menu((encrypt(Path.read_text(filepath), shift), shift))
-                else:
-                    decrypt_to_menu((decrypt(Path.read_text(filepath), shift), shift))
-            else:
-                print("Wrong file or file not found, try again.")
-                continue
+            process_file(filepath, mode)
         elif startpath == 4:
             if mode == "encrypt":
                 encrypt_from_menu()
@@ -255,8 +210,6 @@ def from_file(mode):
             main_menu()
         else:
             sys.exit(0)
-
-
     if mode == "encrypt":
         pass
     else:
@@ -291,7 +244,20 @@ def verify_path(path, type):
             return True
         else:
             return False
-def procces_file():
-    # Code from from_file()
-    pass
+def process_file(filepath, mode):
+    if verify_path(filepath, "file") is True:
+        while True:
+            try:
+                shift = int(input("\n\tPlease type shift\'s number for " + mode + ":\n\t"))
+            except ValueError:
+                print("Wrong input, please type number")
+                continue
+            if str(shift).isdigit():
+                break
+        if mode == "encrypt":
+            encrypt_to_menu((encrypt(Path.read_text(filepath), shift), shift))
+        else:
+            decrypt_to_menu((decrypt(Path.read_text(filepath), shift), shift))
+    else:
+        print("Wrong file or file not found, try again.")
 main_menu()
