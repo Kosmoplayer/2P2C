@@ -8,6 +8,8 @@ abc_up = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
 "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
 "U", "V", "W", "X", "Y", "Z")
 decrypt_text = ""
+cwd = os.getcwd() + os.sep
+userdir = os.path.expanduser("~") + os.sep
 def main_menu():
     print("\t\tShift Cipher Program\n")
     while True:
@@ -78,7 +80,7 @@ def encrypt_to_menu(processed):
         elif choice == 1:
             to_output("encrypt", processed)
         elif choice == 2:
-            to_file()
+            to_file("encrypt")
         elif choice == 3:
             encrypt_from_menu()
         elif choice == 4:
@@ -98,7 +100,7 @@ def decrypt_to_menu(processed):
         elif choice == 1:
             to_output("decrypt", processed)
         elif choice == 2:
-            to_file()
+            to_file("decrypt")
         elif choice == 3:
             decrypt_from_menu()
         elif choice == 4:
@@ -180,40 +182,34 @@ def from_input(mode):
         decrypt_to_menu(processed)
         return processed
 def from_file(mode):
-    cwd = os.getcwd() + os.sep
-    userdir = os.path.expanduser("~") + os.sep
     while True:
         try:
-            startpath = int(input("\n\tWhere to start search the file from?\n\t1. From current directory(\"" + cwd + "\")." + ".\n\t2. "
-                        "From home directory(\"" + userdir + "\")\n\t3. Type path manual.\n\t4. Return to last menu.\n\t5. Return to main menu.\n\t6. Quit\nChoice: "))
+            choice = int(input("\n\tWhere to start search the file from?\n\t1. From current directory(\"" + cwd + "\")." + ".\n\t2. "
+                        "From home directory(\"" + userdir + "\")\n\t3. Type path manual.\n\t4. Return to last menu.\n\t5. Return to main menu.\n\t6. Quit\n\nChoice: "))
         except ValueError:
             print("Wrong input, please type correct number.")
-        if startpath == 1:
+        if choice == 1:
             filepath = cwd
             filepath += input("\n\tPlease type path to .txt file to encrypt.\nPath: " + cwd)
             filepath = Path(filepath)
             process_file(filepath, mode)
-        elif startpath == 2:
+        elif choice == 2:
             filepath = userdir
             filepath += input("\n\tPlease type path to .txt file to encrypt.\nPath: " + userdir)
             filepath = Path(filepath)
             process_file(filepath, mode)
-        elif startpath == 3:
+        elif choice == 3:
             filepath = Path(input("\n\tPlease type path to .txt file to encrypt.\nPath: "))
             process_file(filepath, mode)
-        elif startpath == 4:
+        elif choice == 4:
             if mode == "encrypt":
                 encrypt_from_menu()
             else:
                 decrypt_from_menu()
-        elif startpath == 5:
+        elif choice == 5:
             main_menu()
         else:
             sys.exit(0)
-    if mode == "encrypt":
-        pass
-    else:
-        pass
 def to_output(mode, processed):
     if mode == "encrypt":
         print("\n\tYour encrypted text:\n\n" + str(processed[0]) + "\nShift: \"" + str(processed[1]) + "\"")
@@ -221,8 +217,50 @@ def to_output(mode, processed):
     else:
         print("\n\tYour decrypted text: \n\n" + str(processed[0]))
         done()
-def to_file():
-    pass
+def to_file(mode):
+    while True:
+        try:
+            choice = int(input("\n\tWhere to save the file?\n\t1. To current directory(\"" + cwd + "\")." + ".\n\t2. "
+                      "To home directory(\"" + userdir + "\")\n\t3. Type path manual.\n\t4. Return to last menu."
+                      "\n\t5. Return to main menu.\n\t6. Quit\n\nChoice: "))
+        except ValueError:
+            print("Wrong input, please type correct number.")
+        if choice == 1:
+            filename = input("\n\tPlease type file\'s name, \".txt\" can be ignored."
+                             "\n\tYou can add directories before file\'s name and they will be created, if possible."
+                             "\n\nFilename: ")
+            filepath = (cwd, filename)
+            save_file(filepath, mode)
+        elif choice == 2:
+            filename = input("\n\tPlease type file\'s name, \".txt\" can be ignored."
+                             "\n\tYou can add directories before file\'s name and they will be created, if possible."
+                             "\n\nFilename: ")
+            filepath = (userdir, filename)
+            save_file(filepath, mode)
+        elif choice == 3:
+            while True:
+                dirpath = (input("\n\tPlease type path where save the file.\n\tIf directories aren\'t existed, they will be created if possible"
+                                 "\n\nPath: "))
+                if Path.is_dir(dirpath) is True:
+                    continue
+                else:
+                    choice_wrong = input("\n\tFile path is wrong, type 1 to return or type anything to retype path\n\nChoice: ")
+                    if choice_wrong == "1":
+                        continue
+                    else:
+                        to_file(mode)
+            filename = input("\n\tPlease type file\'s name, \".txt\" can be ignored.\n\nFilename: ")
+            filepath = (dirpath, filename)
+            save_file(filepath, mode)
+        elif choice == 4:
+            if mode == "encrypt":
+                encrypt_from_menu()
+            else:
+                decrypt_from_menu()
+        elif choice == 5:
+            main_menu()
+        else:
+            sys.exit(0)
 def done():
     try:
         choice = int(input("\n\tType \"1\" to return to main menu, or anything else for exit.\nChoice: "))
@@ -260,4 +298,6 @@ def process_file(filepath, mode):
             decrypt_to_menu((decrypt(Path.read_text(filepath), shift), shift))
     else:
         print("Wrong file or file not found, try again.")
+def save_file(filepath, mode):
+    pass
 main_menu()
