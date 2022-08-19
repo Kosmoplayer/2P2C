@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys, os
+import sys, os, re
 from pathlib import Path, PurePath
 abc_low = ("a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
 "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
@@ -143,6 +143,7 @@ def decrypt(text, shift):
             processed_text += text[i]
     return processed_text
 def from_input(mode):
+    shift = ""
     if mode == "encrypt":
         while True:
             text = str(input("\n\tPlease, input text for encrypt:\n\t"))
@@ -182,10 +183,11 @@ def from_input(mode):
         decrypt_to_menu(processed)
         return processed
 def from_file(mode):
+    choice = ""
     while True:
         try:
             choice = int(input("\n\tWhere to start search the file from?\n\t1. From current directory(\"" + cwd + "\")." + ".\n\t2. "
-                        "From home directory(\"" + userdir + "\")\n\t3. Type path manual.\n\t4. Return to last menu.\n\t5. Return to main menu.\n\t6. Quit\n\nChoice: "))
+            "From home directory(\"" + userdir + "\")\n\t3. Type path manual.\n\t4. Return to last menu.\n\t5. Return to main menu.\n\t6. Quit\n\nChoice: "))
         except ValueError:
             print("Wrong input, please type correct number.")
         if choice == 1:
@@ -218,6 +220,7 @@ def to_output(mode, processed):
         print("\n\tYour decrypted text: \n\n" + str(processed[0]))
         done()
 def to_file(mode):
+    choice = ""
     while True:
         try:
             choice = int(input("\n\tWhere to save the file?\n\t1. To current directory(\"" + cwd + "\")." + ".\n\t2. "
@@ -226,32 +229,30 @@ def to_file(mode):
         except ValueError:
             print("Wrong input, please type correct number.")
         if choice == 1:
-            filename = input("\n\tPlease type file\'s name, \".txt\" can be ignored."
+            file = input("\n\tPlease type file\'s name, \".txt\" can be ignored."
                              "\n\tYou can add directories before file\'s name and they will be created, if possible."
                              "\n\nFilename: ")
-            filepath = (cwd, filename)
-            save_file(filepath, mode)
+            process_path(cwd + file, mode)
         elif choice == 2:
-            filename = input("\n\tPlease type file\'s name, \".txt\" can be ignored."
+            file = input("\n\tPlease type file\'s name, \".txt\" can be ignored."
                              "\n\tYou can add directories before file\'s name and they will be created, if possible."
                              "\n\nFilename: ")
-            filepath = (userdir, filename)
-            save_file(filepath, mode)
+            process_path(userdir + file, mode)
         elif choice == 3:
             while True:
                 dirpath = (input("\n\tPlease type path where save the file.\n\tIf directories aren\'t existed, they will be created if possible"
                                  "\n\nPath: "))
-                if Path.is_dir(dirpath) is True:
-                    continue
+                if Path.is_dir(Path(dirpath)) is True:
+                    break
                 else:
-                    choice_wrong = input("\n\tFile path is wrong, type 1 to return or type anything to retype path\n\nChoice: ")
-                    if choice_wrong == "1":
-                        continue
-                    else:
-                        to_file(mode)
-            filename = input("\n\tPlease type file\'s name, \".txt\" can be ignored.\n\nFilename: ")
-            filepath = (dirpath, filename)
-            save_file(filepath, mode)
+                    print("\n\tFile path is wrong, try again.")
+                    continue
+            file = input("\n\tPlease type file\'s name, \".txt\" can be ignored.\n\nFilename: ")
+            if re.match(r"[\/\\]$", dirpath):
+                pass
+            else:
+                dirpath += os.sep
+            process_path(dirpath + file, mode)
         elif choice == 4:
             if mode == "encrypt":
                 encrypt_from_menu()
@@ -270,9 +271,9 @@ def done():
         main_menu()
     else:
         sys.exit(0)
-def verify_path(path, type):
+def verify_path(path, obj_type):
     # Need to add Error catching code
-    if type == "file":
+    if obj_type == "file":
         if PurePath.match(path, '*.txt') is True and Path.is_file(path):
             return True
         else:
@@ -300,4 +301,16 @@ def process_file(filepath, mode):
         print("Wrong file or file not found, try again.")
 def save_file(filepath, mode):
     pass
+def process_path(path, mode):
+    filename = re.search(r"[A-Za-z0-9._\-]+\.txt$", path)
+    if filename:
+        dirpath = re.sub(r"[A-Za-z0-9._\-]+\.txt$", "", path)
+    else:
+        path += ".txt"
+        dirpath = re.sub(r"[A-Za-z0-9._\-]+\.txt$", "", path)
+    if verify_path(Path(dirpath), "dir"):
+        save_file(path, mode)
+    else:
+        print("\n\tWrong path or file\'s name. Try again")
+        to_file(mode)
 main_menu()
