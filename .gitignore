@@ -130,3 +130,7 @@ dmypy.json
 
 # Test cat.txt file
 cat.txt
+
+# PyCharm idea dir
+.idea
+
