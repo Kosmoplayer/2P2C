@@ -80,7 +80,7 @@ def encrypt_to_menu(processed):
         elif choice == 1:
             to_output("encrypt", processed)
         elif choice == 2:
-            to_file("encrypt")
+            to_file("encrypt", processed)
         elif choice == 3:
             encrypt_from_menu()
         elif choice == 4:
@@ -100,7 +100,7 @@ def decrypt_to_menu(processed):
         elif choice == 1:
             to_output("decrypt", processed)
         elif choice == 2:
-            to_file("decrypt")
+            to_file("decrypt", processed)
         elif choice == 3:
             decrypt_from_menu()
         elif choice == 4:
@@ -219,7 +219,7 @@ def to_output(mode, processed):
     else:
         print("\n\tYour decrypted text: \n\n" + str(processed[0]))
         done()
-def to_file(mode):
+def to_file(mode, processed):
     choice = ""
     while True:
         try:
@@ -232,12 +232,12 @@ def to_file(mode):
             file = input("\n\tPlease type file\'s name, \".txt\" can be ignored."
                              "\n\tYou can add directories before file\'s name and they will be created, if possible."
                              "\n\nFilename: ")
-            process_path(cwd + file, mode)
+            process_path(cwd + file, processed, mode)
         elif choice == 2:
             file = input("\n\tPlease type file\'s name, \".txt\" can be ignored."
                              "\n\tYou can add directories before file\'s name and they will be created, if possible."
                              "\n\nFilename: ")
-            process_path(userdir + file, mode)
+            process_path(userdir + file, processed, mode)
         elif choice == 3:
             while True:
                 dirpath = (input("\n\tPlease type path where save the file.\n\tIf directories aren\'t existed, they will be created if possible"
@@ -252,7 +252,7 @@ def to_file(mode):
                 pass
             else:
                 dirpath += os.sep
-            process_path(dirpath + file, mode)
+            process_path(dirpath + file, processed, mode)
         elif choice == 4:
             if mode == "encrypt":
                 encrypt_from_menu()
@@ -289,7 +289,7 @@ def process_file(filepath, mode):
             try:
                 shift = int(input("\n\tPlease type shift\'s number for " + mode + ":\n\t"))
             except ValueError:
-                print("Wrong input, please type number")
+                print("\n\tWrong input, please type number")
                 continue
             if str(shift).isdigit():
                 break
@@ -298,19 +298,41 @@ def process_file(filepath, mode):
         else:
             decrypt_to_menu((decrypt(Path.read_text(filepath), shift), shift))
     else:
-        print("Wrong file or file not found, try again.")
-def save_file(filepath, mode):
-    pass
-def process_path(path, mode):
-    filename = re.search(r"[A-Za-z0-9._\-]+\.txt$", path)
-    if filename:
-        dirpath = re.sub(r"[A-Za-z0-9._\-]+\.txt$", "", path)
+        print("\n\tWrong file or file not found, try again.")
+def save_file(filepath, filename, processed, mode):
+    if Path.exists(Path(filepath)):
+        pass
     else:
-        path += ".txt"
-        dirpath = re.sub(r"[A-Za-z0-9._\-]+\.txt$", "", path)
-    if verify_path(Path(dirpath), "dir"):
-        save_file(path, mode)
-    else:
-        print("\n\tWrong path or file\'s name. Try again")
-        to_file(mode)
+        Path(filepath).mkdir(parents=True, exist_ok=True)
+    try:
+        with Path(filepath + filename).open(mode='x') as file:
+            file.write(processed[0])
+            done()
+    except FileExistsError:
+        answer = input("\n\tFile already exist, overwrite it? [y]es to overwrite or [N]o to return\nAnswer: ")
+        if answer.lower() == "y":
+            os.remove(Path(filepath + filename))
+            with Path(filepath + filename).open(mode='x') as file:
+                file.write(processed[0])
+        else:
+            to_file(mode, processed)
+        done()
+    except PermissionError:
+        print("\n\tPermission denied, you can\'t save file there, try another place.")
+        to_file(mode, processed)
+    except FileNotFoundError:
+        print("\n\tCan\'t save file there, try another place.")
+        to_file(mode, processed)
+def process_path(path, processed, mode):
+    try:
+        filename = re.search(r"[A-Za-z0-9._\-]+\.txt$", path)[0]
+    except TypeError:
+        try:
+            path += ".txt"
+            filename = re.search(r"[A-Za-z0-9._\-]+\.txt$", path)[0]
+        except TypeError:
+            print("\n\tWrong file\'s name or path to file, try again")
+            to_file(mode, processed)
+    dirpath = re.sub(r"[A-Za-z0-9._\-]+\.txt$", "", path)
+    save_file(dirpath, filename, processed, mode)
 main_menu()
