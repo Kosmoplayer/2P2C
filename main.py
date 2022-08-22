@@ -272,9 +272,8 @@ def done():
     else:
         sys.exit(0)
 def verify_path(path, obj_type):
-    # Need to add Error catching code
     if obj_type == "file":
-        if PurePath.match(path, '*.txt') is True and Path.is_file(path):
+        if PurePath.match(path, '*.txt') and Path.is_file(path):
             return True
         else:
             return False
@@ -335,4 +334,5 @@ def process_path(path, processed, mode):
             to_file(mode, processed)
     dirpath = re.sub(r"[A-Za-z0-9._\-]+\.txt$", "", path)
     save_file(dirpath, filename, processed, mode)
-main_menu()
+if __name__ == "__main__":
+    main_menu()
