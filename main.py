@@ -2,7 +2,7 @@
 import sys, os, re
 from pathlib import Path, PurePath
 import alphabets
-language = None
+language = ()
 abc_low = ("a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
 "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
 "u", "v", "w", "x", "y", "z")
@@ -125,36 +125,36 @@ def decrypt_to_menu(processed):
 def encrypt(text, shift):
     processed_text = ""
     for i in range(len(text)):
-        if str.isalpha(text[i]) and (text[i] in abc_low) is True:
-            if (int(abc_low.index(text[i])) + int(shift)) <= 25:
-                shifted_index = int(abc_low.index(text[i])) + int(shift)
+        if str.isalpha(text[i]) and text[i].islower() is True:
+            if (int(language.index(text[i])) + int(shift)) <= len(language):
+                shifted_index = int(language.index(text[i])) + int(shift)
             else:
-                shifted_index = int(abc_low.index(text[i])) + int(shift) - (25 * ((int(abc_low.index(text[i])) + int(shift)) // 25))
-            processed_text += abc_low[shifted_index]
-        elif str.isalpha(text[i]) and (text[i] in abc_up) is True:
-            if (int(abc_up.index(text[i])) + int(shift)) <= 25:
-                shifted_index = int(abc_up.index(text[i])) + int(shift)
+                shifted_index = int(language.index(text[i])) + int(shift) - (len(language) * ((int(language.index(text[i])) + int(shift)) // len(language)))
+            processed_text += language[shifted_index]
+        elif str.isalpha(text[i]) and text[i].isupper() is True:
+            if (int(language.index(text[i].lower())) + int(shift)) <= len(language):
+                shifted_index = int(language.index(text[i].lower())) + int(shift)
             else:
-                shifted_index = int(abc_up.index(text[i])) + int(shift) - (26 * ((int(abc_up.index(text[i])) + int(shift)) // 25))
-            processed_text += abc_up[shifted_index]
+                shifted_index = int(language.index(text[i].lower())) + int(shift) - ((len(language)+1) * ((int(language.index(text[i].lower())) + int(shift)) // len(language)))
+            processed_text += language[shifted_index].upper()
         else:
             processed_text += text[i]
     return processed_text
 def decrypt(text, shift):
     processed_text = ""
     for i in range(len(text)):
-        if str.isalpha(text[i]) and (text[i] in abc_low) is True:
-            if (int(abc_low.index(text[i])) - int(shift)) > 0:
-                shifted_index = int(abc_low.index(text[i])) - int(shift)
+        if str.isalpha(text[i]) and text[i].islower() is True:
+            if (int(language.index(text[i])) - int(shift)) > 0:
+                shifted_index = int(language.index(text[i])) - int(shift)
             else:
-                shifted_index = int(abc_low.index(text[i])) - int(shift) - (25 * ((int(abc_low.index(text[i])) - int(shift)) // 25))
-            processed_text += abc_low[shifted_index]
-        elif str.isalpha(text[i]) and (text[i] in abc_up) is True:
-            if (int(abc_up.index(text[i])) - int(shift)) > 0:
-                shifted_index = int(abc_up.index(text[i])) - int(shift)
+                shifted_index = int(language.index(text[i])) - int(shift) - (len(language) * ((int(language.index(text[i])) - int(shift)) // len(language)))
+            processed_text += language[shifted_index]
+        elif str.isalpha(text[i]) and text[i].isupper() is True:
+            if (int(language.index(text[i].lower())) - int(shift)) > 0:
+                shifted_index = int(language.index(text[i].lower())) - int(shift)
             else:
-                shifted_index = int(abc_up.index(text[i])) - int(shift) - (26 * ((int(abc_up.index(text[i])) - int(shift)) // 25))
-            processed_text += abc_up[shifted_index]
+                shifted_index = int(language.index(text[i].lower())) - int(shift) - ((len(language)+1) * ((int(language.index(text[i].lower())) - int(shift)) // len(language)))
+            processed_text += language[shifted_index].upper()
         else:
             processed_text += text[i]
     return processed_text
@@ -351,6 +351,5 @@ def process_path(path, processed, mode):
     dirpath = re.sub(r"[A-Za-z0-9._\-]+\.txt$", "", path)
     save_file(dirpath, filename, processed, mode)
 if __name__ == "__main__":
-    if language is None:
-        select_lang()
+    select_lang()
     main_menu()
