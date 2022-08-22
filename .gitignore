@@ -128,8 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Test cat.txt file
+# Test's files
 cat.txt
+rus.py
 
 # PyCharm idea dir
 .idea/
