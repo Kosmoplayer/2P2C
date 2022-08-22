@@ -1,6 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import sys, os, re
 from pathlib import Path, PurePath
+import alphabets
+language = None
 abc_low = ("a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
 "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
 "u", "v", "w", "x", "y", "z")
@@ -11,23 +13,37 @@ decrypt_text = ""
 cwd = os.getcwd() + os.sep
 userdir = os.path.expanduser("~") + os.sep
 def main_menu():
-    print("\t\tShift Cipher Program\n")
+    print("\t\tShift Cipher Program")
     while True:
         try:
-            choice = int(input("\n\tPlease, choice what to do:\n\n"
-            "\t1. Encrypt\n\t2. Decrypt\n\t3. Quit\n\nChoice: "))
+            choice = int(input(f"\n\tPlease, choice what to do:\n\n"
+            f"\t1. Encrypt\n\t2. Decrypt\n\t3. Change language (using {list(alphabets.lang_list.keys())[list(alphabets.lang_list.values()).index(language)]})\n\t4. Quit\n\nAnswer: "))
         except ValueError:
             print("\nPlease, choice right answer or type 3 to quit.")
             continue
-        if choice not in (1, 2, 3):
+        if choice not in (1, 2, 3, 4):
             print("\nPlease, choice right answer or type 3 to quit.")
             continue
         elif choice == 1:
             encrypt_from_menu()
         elif choice == 2:
             decrypt_from_menu()
+        elif choice == 3:
+            select_lang()
         else:
             sys.exit(0)
+def select_lang():
+    print("\n\tPlease, select language's alphabet to work with. You can always change it in main menu.")
+    print("\n\tAvailable languages:")
+    n = 1
+    dict_lang = dict()
+    for key in sorted(alphabets.lang_list):
+        print(f"\t{n}. {key}")
+        dict_lang.update({n: key})
+        n += 1
+    lang = int(input("\n\tPlease select provided language by number\nAnswer: "))
+    global language
+    language = alphabets.lang_list[dict_lang[lang]]
 def encrypt_from_menu():
     while True:
         try:
@@ -335,4 +351,6 @@ def process_path(path, processed, mode):
     dirpath = re.sub(r"[A-Za-z0-9._\-]+\.txt$", "", path)
     save_file(dirpath, filename, processed, mode)
 if __name__ == "__main__":
+    if language is None:
+        select_lang()
     main_menu()
