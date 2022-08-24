@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, os, re
+import sys, os, re, argparse
 from pathlib import Path, PurePath
 import alphabets
 language = ()
@@ -351,5 +351,49 @@ def process_path(path, processed, mode):
     dirpath = re.sub(r"[A-Za-z0-9._\-]+\.txt$", "", path)
     save_file(dirpath, filename, processed, mode)
 if __name__ == "__main__":
-    select_lang()
-    main_menu()
+    parser = argparse.ArgumentParser(prog='2P2C', description="2P2C - Python Project Ceaser Cypher. Program for encryption/decryption text with ceaser cypher. NOTE: This encryptin method is not safe to use, only for introductory purposes.")
+    parser.add_argument('-L','--lang-list',
+                        help="Display available languages and exit.",
+                        action="store_true")
+    #mode = parser.add_mutually_exclusive_group()
+
+    subparsers = parser.add_subparsers(dest='func', required=True)
+
+    encrypt = subparsers.add_parser('encrypt',
+                        help="Encryption mode")
+    encrypt.add_argument('-i', '--input',
+                        help="Path to .txt file. If not given, using stdin. .Ignored if using input redirection.")
+    encrypt.add_argument('-o', '--output',
+                        help="Path where to save encrypted text as .txt file. If not given, using stdout. Ignored if using output redirection.")
+    encrypt.add_argument('-s', '--shift',
+                         type=int,
+                         required=True,
+                         help="Number required to process text.")
+    encrypt.add_argument('-l', '--language',
+                         help="Specify the language to be used. Default: en (English).",
+                         type=str,
+                         default="en")
+
+    decrypt = subparsers.add_parser('decrypt',
+                        help="Decryption mode")
+    decrypt.add_argument('-i', '--input',
+                        help="Path to encrypted .txt file. If not given, using stdin. Ignored if using input redirection")
+    decrypt.add_argument('-o', '--output',
+                        help="Path where to save decrypted text as .txt file. If not given, using stdout. Ignored if using output redirection.")
+    decrypt.add_argument('-s', '--shift',
+                         type=int,
+                         required=True,
+                         help="Number required to process text")
+    decrypt.add_argument('-l', '--language',
+                         help="Specify the language to be used. Default: en (English).",
+                         type=str,
+                         default="en")
+
+    args = parser.parse_args()
+
+"""    if args.parser == :
+        for key, value in alphabets.lang_list:
+            print(f"Available languages:\n{key}: {value}")"""
+
+#    select_lang()
+#    main_menu()
