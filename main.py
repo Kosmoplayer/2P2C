@@ -355,9 +355,8 @@ if __name__ == "__main__":
     parser.add_argument('-L','--lang-list',
                         help="Display available languages and exit.",
                         action="store_true")
-    #mode = parser.add_mutually_exclusive_group()
 
-    subparsers = parser.add_subparsers(dest='func', required=True)
+    subparsers = parser.add_subparsers(dest='func', required=False)
 
     encrypt = subparsers.add_parser('encrypt',
                         help="Encryption mode")
@@ -390,10 +389,14 @@ if __name__ == "__main__":
                          default="en")
 
     args = parser.parse_args()
-
-"""    if args.parser == :
+    if args.func == "encrypt":
+        pass
+    elif args.func == "decrypt":
+        pass
+    elif args.parser == "lang-list":
         for key, value in alphabets.lang_list:
-            print(f"Available languages:\n{key}: {value}")"""
-
+            print(f"Available languages:\n{key}: {value}")
+    else:
+        main_menu()
 #    select_lang()
 #    main_menu()
