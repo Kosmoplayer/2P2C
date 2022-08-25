@@ -7,4 +7,5 @@ de = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
 pt = en
 #hin = ('अ', 'आ', 'ए', 'ई', 'ऍ', 'ऎ', 'ऐ', 'इ', 'ओ', 'ऑ', 'ऒ', 'ऊ', 'औ', 'उ', 'ब', 'भ', 'च', 'छ', 'ड', 'ढ', 'फ', 'फ़', 'ग', 'घ', 'ग़', 'ह', 'ज', 'झ', 'क', 'ख', 'ख़', 'ल', 'ळ', 'ऌ', 'ऴ', 'ॡ', 'म', 'न', 'ङ', 'ञ', 'ण', 'ऩ', 'ॐ', 'प', 'क़', 'र', 'ऋ', 'ॠ', 'ऱ', 'स', 'श', 'ष', 'ट', 'त', 'ठ', 'द', 'थ', 'ध', 'ड़', 'ढ़', 'व', 'य', 'य़', 'ज़')
 
-lang_list = {"Russian": ru, "English": en, "Ukranian": uk, "Spanish": es, "French": fr, "German": de, "Portuguese": pt}
+lang_list = {"Russian": ru, "English": en, "Ukrainian": uk, "Spanish": es, "French": fr, "German": de, "Portuguese": pt}
+lang_list_print = {"Russian": "ru", "English": "en", "Ukrainian": "uk", "Spanish": "es", "French": "fr", "German": "de", "Portuguese": "pt"}

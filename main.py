@@ -352,51 +352,64 @@ def process_path(path, processed, mode):
     save_file(dirpath, filename, processed, mode)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='2P2C', description="2P2C - Python Project Ceaser Cypher. Program for encryption/decryption text with ceaser cypher. NOTE: This encryptin method is not safe to use, only for introductory purposes.")
-    parser.add_argument('-L','--lang-list',
+    parser.add_argument('-L','--langlist',
                         help="Display available languages and exit.",
                         action="store_true")
 
     subparsers = parser.add_subparsers(dest='func', required=False)
-
-    encrypt = subparsers.add_parser('encrypt',
-                        help="Encryption mode")
-    encrypt.add_argument('-i', '--input',
-                        help="Path to .txt file. If not given, using stdin. .Ignored if using input redirection.")
-    encrypt.add_argument('-o', '--output',
-                        help="Path where to save encrypted text as .txt file. If not given, using stdout. Ignored if using output redirection.")
-    encrypt.add_argument('-s', '--shift',
-                         type=int,
-                         required=True,
-                         help="Number required to process text.")
-    encrypt.add_argument('-l', '--language',
-                         help="Specify the language to be used. Default: en (English).",
-                         type=str,
-                         default="en")
-
-    decrypt = subparsers.add_parser('decrypt',
-                        help="Decryption mode")
-    decrypt.add_argument('-i', '--input',
-                        help="Path to encrypted .txt file. If not given, using stdin. Ignored if using input redirection")
-    decrypt.add_argument('-o', '--output',
-                        help="Path where to save decrypted text as .txt file. If not given, using stdout. Ignored if using output redirection.")
-    decrypt.add_argument('-s', '--shift',
-                         type=int,
-                         required=True,
-                         help="Number required to process text")
-    decrypt.add_argument('-l', '--language',
-                         help="Specify the language to be used. Default: en (English).",
-                         type=str,
-                         default="en")
-
+# Encrypt arguments
+    enc = subparsers.add_parser('encrypt',
+                                help="Encryption mode")
+    #encrypt.add_argument('input',
+    #                     help="Text to process")
+    enc.add_argument('-i', '--input', dest="encin",
+                     help="Path to .txt file. If not given, using stdin. .Ignored if using input redirection.")
+    enc.add_argument('-o', '--output', dest="encout",
+                     help="Path where to save encrypted text as .txt file. If not given, using stdout. Ignored if using output redirection.")
+    enc.add_argument('-s', '--shift', dest="encshi",
+                     type=int,
+                     required=True,
+                     help="Number required to process text.")
+    enc.add_argument('-l', '--language', dest="enclang",
+                     help="Specify the language to be used. Default: en (English).",
+                     type=str,
+                     default="en")
+# Decrypt arguments
+    dec = subparsers.add_parser('decrypt',
+                                help="Decryption mode")
+    #decrypt.add_argument('input',
+    #                     help="Text to process")
+    dec.add_argument('-i', '--input', dest="decin",
+                     help="Path to encrypted .txt file. If not given, using stdin. Ignored if using input redirection")
+    dec.add_argument('-o', '--output', dest="decout",
+                     help="Path where to save decrypted text as .txt file. If not given, using stdout. Ignored if using output redirection.")
+    dec.add_argument('-s', '--shift', dest="decshi",
+                     type=int,
+                     required=True,
+                     help="Number required to process text")
+    dec.add_argument('-l', '--language', dest="declang",
+                     help="Specify the language to be used. Default: en (English).",
+                     type=str,
+                     default="en")
     args = parser.parse_args()
     if args.func == "encrypt":
-        pass
+        if args.encin:
+            if verify_path(Path(args.encin), "file"):
+                # Very difficult function. First, get key name from lang_list_print{}, then get value from lang_list{} by key.
+                language = alphabets.lang_list[list(alphabets.lang_list_print.keys())[list(alphabets.lang_list_print.values()).index(args.enclang)]]
+                print(encrypt(Path.read_text(Path(args.encin)), args.encshi))
     elif args.func == "decrypt":
-        pass
-    elif args.parser == "lang-list":
-        for key, value in alphabets.lang_list:
-            print(f"Available languages:\n{key}: {value}")
+        if args.decin:
+            if verify_path(Path(args.decin), "file"):
+                # Very difficult function. First, get key name from lang_list_print{}, then get value from lang_list{} by key.
+                language = alphabets.lang_list[list(alphabets.lang_list_print.keys())[list(alphabets.lang_list_print.values()).index(args.declang)]]
+                print(encrypt(Path.read_text(Path(args.decin)), args.decshi))
+    elif args.langlist:
+        print("Available languages:")
+        for key in sorted(alphabets.lang_list_print.keys()):
+            print(f"{key}: {alphabets.lang_list_print[key]}")
     else:
+        select_lang()
         main_menu()
 #    select_lang()
 #    main_menu()
